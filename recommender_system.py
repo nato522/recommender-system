@@ -1,7 +1,13 @@
+import random
+import numpy as np
+
+# global variables for the number of lines and columns
+LINES = 50
+COLUMNS = 20
+
+
 def read_matrix():
-    # Creates a list containing 5 lists, each of 8 items, all set to 0
-    columns, lines = 20, 50
-    movie_matrix = [[0 for x in range(columns)] for y in range(lines)]
+    movie_matrix = [[0 for x in range(COLUMNS)] for y in range(LINES)]
     filepath = 'matrix.txt'
 
     fp = open(filepath)
@@ -11,23 +17,63 @@ def read_matrix():
             # we will have an array of ratings for each line
             line_vector = []
             line_vector = line.split()  # split by space
-            # print(line_vector)
             j = 0
             for rating in line_vector:
-                movie_matrix[i][j] = rating
+                movie_matrix[i][j] = float(rating)
                 j += 1
             i += 1
     fp.close()
-
     return movie_matrix
+
+
+def empty_random(matrix, fraction):
+
+    # the matrix transformed into a list
+    flat_list = []
+    for sublist in matrix:
+        for item in sublist:
+            flat_list.append(item)
+
+    # generate the same random indexes for every program run
+    random.seed(30)
+    indexes = list(set(random.sample(list(range(len(flat_list))), int(fraction * COLUMNS * LINES))));
+
+    # set elements to zero
+    for i in indexes:
+        flat_list[i] = 0
+
+    # transform the flat list into matrix
+    shape = (LINES, COLUMNS)
+    matrix = np.array(flat_list).reshape(shape)
+    return matrix
+
+
+# helper function
+def print_matrix(matrix):
+    i_aux = 0
+    j_aux = 0
+    for i_aux in range(LINES):
+        for j_aux in range(COLUMNS):
+            print(matrix[i_aux][j_aux], end=' ')
+        print()
+
+
+# helper function to check that 25% of the matrix is with the value 0
+def count_zeros(matrix):
+    i_aux = 0
+    j_aux = 0
+    count = 0
+    for i_aux in range(LINES):
+        for j_aux in range(COLUMNS):
+            if matrix[i_aux][j_aux] == 0:
+                count += 1
+    print(count)
+
 
 def main():
     movie_matrix = read_matrix()
-    i_aux = 0
-    j_aux = 0
-    for i_aux in range(50):
-        for j_aux in range(20):
-            print(movie_matrix[i_aux][j_aux], end=' ')
-        print()
+    movie_matrix = empty_random(movie_matrix, 0.25)
+    print_matrix(movie_matrix)
+    count_zeros(movie_matrix)
 
 main()
