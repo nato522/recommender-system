@@ -69,14 +69,17 @@ def count_zeros(matrix):
                 count += 1
     print(count)
 
+def get_average(arr):
+    arr_total = sum(arr)
+    arr_length = np.count_nonzero(arr)
+    return arr_total / arr_length
+
 def normalize_matrix(matrix):
     row = 0
     column = 0
     for row in range(LINES):
         arr = matrix[row]
-        arr_total = sum(arr)
-        arr_length = np.count_nonzero(arr)
-        avg = arr_total / arr_length
+        avg = get_average(arr)
         for column in range(COLUMNS):
             elem = matrix[row][column]
             if elem != 0.0:
