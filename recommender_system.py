@@ -54,7 +54,7 @@ def print_matrix(matrix):
     j_aux = 0
     for i_aux in range(LINES):
         for j_aux in range(COLUMNS):
-            print(matrix[i_aux][j_aux], end=' ')
+            print(matrix[i_aux][j_aux], end=" ")
         print()
 
 
@@ -69,11 +69,26 @@ def count_zeros(matrix):
                 count += 1
     print(count)
 
+def normalize_matrix(matrix):
+    row = 0
+    column = 0
+    for row in range(LINES):
+        arr = matrix[row]
+        arr_total = sum(arr)
+        arr_length = np.count_nonzero(arr)
+        avg = arr_total / arr_length
+        for column in range(COLUMNS):
+            elem = matrix[row][column]
+            if elem != 0.0:
+                matrix[row][column] = matrix[row][column] - avg
+    return matrix
 
 def main():
     movie_matrix = read_matrix()
     movie_matrix = empty_random(movie_matrix, 0.25)
     print_matrix(movie_matrix)
     count_zeros(movie_matrix)
+    norm_matrix = normalize_matrix(movie_matrix)
+    print_matrix(norm_matrix)
 
 main()
