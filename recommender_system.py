@@ -130,21 +130,20 @@ def count_zeros(matrix):
 
 def select_k_neighbours(k, column):
     aux_column = column.copy()
-    # for i in range(k):
-    #   print(aux_column[i], end=" \n")
-    print(aux_column)
+    # aux_column = list(map(int, aux_column))
+    aux_column.sort()
+    print("Sortat ", aux_column)
 
 
 def predicted_value(matrix):
     print('My matrix:')
-    print(matrix)
-    print('----------------------')
+    print_matrix(matrix)
     columns = np.size(matrix, 1)
-    for i in range(columns-1):
+
+    for i in range(columns):
         col = matrix[:, i]
-        print(col)
         select_k_neighbours(2, col)
-        print('----------------------')
+        # print('----------------------')
 
 
 def main():
@@ -153,9 +152,10 @@ def main():
     norm_matrix = normalize_matrix(movie_matrix)
 
     pearson_matrix = calculate_pearson_matrix(norm_matrix)
-    print_matrix(pearson_matrix)
-    print(count_zeros(pearson_matrix))
-    my_matrix = np.matrix('0 1 2 3 4 5 6 7 8 9; 25 12 4 35 6 663 12 34 99 109; 8 8 9 0 1 2 7 8 9 0; 11 22 33 44 55 66 77 88 99 189')
+    # print_matrix(pearson_matrix)
+    # print(count_zeros(pearson_matrix))
+    my_matrix = np.random.randint(100, size=(4, 10))
     predicted_value(my_matrix)
+
 
 main()
