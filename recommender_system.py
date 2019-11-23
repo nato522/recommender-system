@@ -69,10 +69,12 @@ def count_zeros(matrix):
                 count += 1
     print(count)
 
+
 def get_average(arr):
     arr_total = sum(arr)
     arr_length = np.count_nonzero(arr)
     return arr_total / arr_length
+
 
 def normalize_matrix(matrix):
     row = 0
@@ -86,36 +88,21 @@ def normalize_matrix(matrix):
                 matrix[row][column] = matrix[row][column] - avg
     return matrix
 
-def pearson(x, y):
-    x = [2, 0, 3, 5, 4]
-    y = [4, 3, 5, 3, 0]
 
-    non_zero_elements_x = np.count_nonzero(x)
-    non_zero_elements_y = np.count_nonzero(y)
-    total_x = 0
-    total_y = 0
-    for ele in range(0, len(x)):
-        total_x = total_x + x[ele]
+def pearson():
+    x = [5, 1, 0, 2, 2]
+    y = [1, 5, 2, 5, 5]
 
-    for ele in range(0, len(y)):
-        total_y = total_y + y[ele]
+    x_mean = get_average(x)
+    y_mean = get_average(y)
 
-    x_mean = total_x / non_zero_elements_x
-    y_mean = total_y / non_zero_elements_y
-
-    product = 0
     numerator = 0
-    for ele in range(0, len(x)):
-        # we need to ignore the elements that are not rated by both users
-        if x[ele] != 0 and y[ele] != 0:
-            product = (x[ele] - x_mean) * (y[ele] - y_mean)
-            numerator += product
-
     sum_den_x = 0
     sum_den_y = 0
     for ele in range(0, len(x)):
         # we need to ignore the elements that are not rated by both users
         if x[ele] != 0 and y[ele] != 0:
+            numerator += (x[ele] - x_mean) * (y[ele] - y_mean)
             sum_den_x += pow((x[ele] - x_mean), 2)
             sum_den_y += pow((y[ele] - y_mean), 2)
 
@@ -132,7 +119,7 @@ def main():
     count_zeros(movie_matrix)
     norm_matrix = normalize_matrix(movie_matrix)
     print_matrix(norm_matrix)
-    pearson()
+    print(pearson())
 
 
 main()
