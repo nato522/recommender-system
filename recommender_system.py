@@ -1,7 +1,9 @@
 import random
 import numpy as np
+import math
 
 # global variables for the number of lines and columns
+
 LINES = 50
 COLUMNS = 20
 
@@ -27,7 +29,6 @@ def read_matrix():
 
 
 def empty_random(matrix, fraction):
-
     # the matrix transformed into a list
     flat_list = []
     for sublist in matrix:
@@ -70,10 +71,51 @@ def count_zeros(matrix):
     print(count)
 
 
+def pearson(x, y):
+    x = [2, 0, 3, 5, 4]
+    y = [4, 3, 5, 3, 0]
+
+    non_zero_elements_x = np.count_nonzero(x)
+    non_zero_elements_y = np.count_nonzero(y)
+    total_x = 0
+    total_y = 0
+    for ele in range(0, len(x)):
+        total_x = total_x + x[ele]
+
+    for ele in range(0, len(y)):
+        total_y = total_y + y[ele]
+
+    x_mean = total_x / non_zero_elements_x
+    y_mean = total_y / non_zero_elements_y
+
+    product = 0
+    numerator = 0
+    for ele in range(0, len(x)):
+        # we need to ignore the elements that are not rated by both users
+        if x[ele] != 0 and y[ele] != 0:
+            product = (x[ele] - x_mean) * (y[ele] - y_mean)
+            numerator += product
+
+    sum_den_x = 0
+    sum_den_y = 0
+    for ele in range(0, len(x)):
+        # we need to ignore the elements that are not rated by both users
+        if x[ele] != 0 and y[ele] != 0:
+            sum_den_x += pow((x[ele] - x_mean), 2)
+            sum_den_y += pow((y[ele] - y_mean), 2)
+
+    denominator = math.sqrt(sum_den_x * sum_den_y)
+
+    pearson_result = numerator / denominator
+    return pearson_result;
+
+
 def main():
     movie_matrix = read_matrix()
     movie_matrix = empty_random(movie_matrix, 0.25)
     print_matrix(movie_matrix)
     count_zeros(movie_matrix)
+    pearson()
+
 
 main()
