@@ -112,14 +112,35 @@ def pearson():
     return pearson_result;
 
 
+def select_k_neighbours(k, column):
+    aux_column = column.copy()
+    # for i in range(k):
+    #   print(aux_column[i], end=" \n")
+    print(aux_column)
+
+
+def predicted_value(matrix):
+    print('My matrix:')
+    print(matrix)
+    print('----------------------')
+    columns = np.size(matrix, 1)
+    for i in range(columns-1):
+        col = matrix[:, i]
+        print(col)
+        select_k_neighbours(2, col)
+        print('----------------------')
+
+
 def main():
-    movie_matrix = read_matrix()
-    movie_matrix = empty_random(movie_matrix, 0.25)
-    print_matrix(movie_matrix)
-    count_zeros(movie_matrix)
-    norm_matrix = normalize_matrix(movie_matrix)
-    print_matrix(norm_matrix)
-    print(pearson())
+    my_matrix = np.matrix('0 1 2 3 4 5 6 7 8 9; 25 12 4 35 6 663 12 34 99 109; 8 8 9 0 1 2 7 8 9 0; 11 22 33 44 55 66 77 88 99 189')
+    # movie_matrix = read_matrix()
+    # movie_matrix = empty_random(movie_matrix, 0.25)
+    # print_matrix(movie_matrix)
+    # count_zeros(movie_matrix)
+    # norm_matrix = normalize_matrix(movie_matrix)
+    # print_matrix(norm_matrix)
+    # print(pearson())
+    predicted_value(my_matrix)
 
 
 main()
