@@ -1,2 +1,5 @@
 .idea/*
 .DS_Store
+get-pip.py
+results/
+__pycache__/
