@@ -189,7 +189,7 @@ def calculate_rating_prediction(k, map_ratings_neighbours):
     return rating
 
 
-def get_predicted_ratings(k, pearson_matrix, norm_matrix):
+def get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix):
     # 1st step: determine all the users that have rated the item we want to predict for user u
     # for step 1, we will need the normalized matrix to see where the zeros are
     # 2nd step: choose k users considering the sorted similarities
@@ -198,6 +198,7 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix):
 
     lines_norm = len(norm_matrix)
     columns_norm = len(norm_matrix[0])
+    final_matrix = movie_matrix.copy()
 
     for i in range(lines_norm):
         # list of column indexes of zero occurrences on every line
@@ -215,19 +216,20 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix):
 
             # the map will have this structure {index: [rating, pearson_value]}
             # {1: [4.0, 0.143]};  0.143 is the p. value between user 1 and the user we want to calculate the rating for
-            norm_matrix[i][j] = calculate_rating_prediction(k, map_ratings_neighbours)
-
-    return norm_matrix
+            rating = calculate_rating_prediction(k, map_ratings_neighbours)
+            denormalized_rating = denormalize_rating_matrix(rating, movie_matrix, i)
+            final_matrix[i][j] = round_rating(denormalized_rating)
+    return final_matrix
 
 
 def main():
     k = 0  # number of neighbours based on similarity (the value of pearson)
 
-    my_matrix = read_matrix()
-    my_matrix = empty_random(my_matrix, 0.25)
-    # norm_matrix = normalize_matrix(my_matrix)
-    pearson_matrix = calculate_pearson_matrix(my_matrix)
-    final_matrix = get_predicted_ratings(k, pearson_matrix, my_matrix)
+    movie_matrix = read_matrix()
+    movie_matrix = empty_random(movie_matrix, 0.25)
+    norm_matrix = normalize_matrix(movie_matrix)
+    pearson_matrix = calculate_pearson_matrix(movie_matrix)
+    final_matrix = get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix)
     print("Final matrix")
     print_matrix(final_matrix)
 
