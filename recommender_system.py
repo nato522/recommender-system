@@ -241,7 +241,6 @@ def get_all_rated_movies(user_id, list_predicted_info):
 
 def main():
     k = 0  # number of neighbours based on similarity (the value of pearson)
-    map_new_rated_movies = {}
     movie_matrix = read_matrix()
     movie_matrix = empty_random(movie_matrix, 0.25)
     norm_matrix = normalize_matrix(movie_matrix)
@@ -251,9 +250,11 @@ def main():
     print_matrix(final_matrix)
 
     # helper function to get all the new ratings for a specific user with the associated movie
-    user_id = 0
+    user_id = 1
     map_all_rated_movies = get_all_rated_movies(user_id, list_predicted_info)
     print("The predicted movies for the user ", user_id, "are ", map_all_rated_movies)
+    for key in map_all_rated_movies:
+        print(user_id, " ", key, " ", map_all_rated_movies[key])
 
 
 class PredictedInfo:
