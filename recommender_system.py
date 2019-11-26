@@ -196,6 +196,7 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix):
     # 3rd step: calculate the predicted rating using the formula
     # 4th step: denormalize the result
 
+    list_predicted_info = []
     lines_norm = len(norm_matrix)
     columns_norm = len(norm_matrix[0])
     final_matrix = movie_matrix.copy()
@@ -219,19 +220,47 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix):
             rating = calculate_rating_prediction(k, map_ratings_neighbours)
             denormalized_rating = denormalize_rating_matrix(rating, movie_matrix, i)
             final_matrix[i][j] = round_rating(denormalized_rating)
-    return final_matrix
+            predicted_info_obj = PredictedInfo(i, j, final_matrix[i][j])
+            list_predicted_info.append(predicted_info_obj)
+    return final_matrix, list_predicted_info
+
+
+def get_all_rated_movies(user_id, list_predicted_info):
+
+    if user_id > 50 or user_id < 0:
+        print("Wrong user id!")
+
+    map_all_rated_movies = {} # hash map with the key = movie_id and value = predicted_rating
+
+    for info in list_predicted_info:
+        if user_id == info.user_id:
+            map_all_rated_movies[info.movie_id] = info.predicted_rating
+
+    return map_all_rated_movies
 
 
 def main():
     k = 0  # number of neighbours based on similarity (the value of pearson)
-
+    map_new_rated_movies = {}
     movie_matrix = read_matrix()
     movie_matrix = empty_random(movie_matrix, 0.25)
     norm_matrix = normalize_matrix(movie_matrix)
     pearson_matrix = calculate_pearson_matrix(movie_matrix)
-    final_matrix = get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix)
+    final_matrix, list_predicted_info = get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix)
     print("Final matrix")
     print_matrix(final_matrix)
+
+    # helper function to get all the new ratings for a specific user with the associated movie
+    user_id = 0
+    map_all_rated_movies = get_all_rated_movies(user_id, list_predicted_info)
+    print("The predicted movies for the user ", user_id, "are ", map_all_rated_movies)
+
+
+class PredictedInfo:
+    def __init__(self, user_id, movie_id, predicted_rating):
+        self.user_id = user_id
+        self.movie_id = movie_id
+        self.predicted_rating = predicted_rating
 
 
 main()
