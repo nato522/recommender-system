@@ -71,6 +71,24 @@ def normalize_matrix(matrix):
     return aux_matrix
 
 
+def denormalize_rating_matrix(predicted_rating, matrix, user_index):
+    aux_matrix = matrix.copy()
+    ratings = aux_matrix[user_index]
+    avg = get_average(ratings)
+    normalized_rating = predicted_rating + avg
+    return normalized_rating
+
+
+def denormalize_rating_row(predicted_rating, ratings):
+    avg = get_average(ratings)
+    normalized_rating = predicted_rating + avg
+    return normalized_rating
+
+
+def round_rating(rating):
+    return round(rating * 2) / 2
+
+
 def pearson(x, y):
     x_mean = get_average(x)
     y_mean = get_average(y)
