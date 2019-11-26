@@ -35,16 +35,18 @@ def empty_random(matrix, fraction):
         for item in sublist:
             flat_list.append(item)
 
+    lines = len(matrix)
+    columns = len(matrix[0])
     # generate the same random indexes for every program run
     random.seed(30)
-    indexes = list(set(random.sample(list(range(len(flat_list))), int(fraction * COLUMNS * LINES))));
+    indexes = list(set(random.sample(list(range(len(flat_list))), int(fraction * columns * lines))));
 
     # set elements to zero
     for i in indexes:
         flat_list[i] = 0
 
     # transform the flat list into matrix
-    shape = (LINES, COLUMNS)
+    shape = (lines, columns)
     matrix = np.array(flat_list).reshape(shape)
     return matrix
 
@@ -59,10 +61,10 @@ def normalize_matrix(matrix):
     aux_matrix = matrix.copy()
     row = 0
     column = 0
-    for row in range(LINES):
+    for row in range(len(matrix)):
         arr = aux_matrix[row]
         avg = get_average(arr)
-        for column in range(COLUMNS):
+        for column in range(len(matrix[0])):
             elem = aux_matrix[row][column]
             if elem != 0.0:
                 aux_matrix[row][column] = aux_matrix[row][column] - avg
@@ -88,7 +90,6 @@ def round_rating(rating):
 
 
 def pearson(x, y):
-
     x_mean = get_average(x)
     y_mean = get_average(y)
 
@@ -109,9 +110,8 @@ def pearson(x, y):
 
 
 def calculate_pearson_matrix(matrix):
-    pearson_matrix = [[0 for x in range(LINES)] for y in range(LINES)]
-
     lines = len(matrix)
+    pearson_matrix = [[0 for x in range(lines)] for y in range(lines)]
     columns = len(matrix[0])
 
     # get all the combinations of rows from the matrix
@@ -135,7 +135,7 @@ def print_matrix(matrix):
 
 
 # helper function to check that 25% of the matrix is with the value 0
-def count_zeros(matrix):
+def count_ones(matrix):
     i_aux = 0
     j_aux = 0
     count = 0
@@ -147,33 +147,89 @@ def count_zeros(matrix):
 
 
 def select_k_neighbours(k, column):
+    neighbours = []
     aux_column = column.copy()
-    # aux_column = list(map(int, aux_column))
     aux_column.sort()
-    print("Sortat ", aux_column)
+
+    for index, elem in reversed(list(enumerate(aux_column))):
+        if k > 0:
+            neighbours.append(elem)
+            k -= 1
+
+    return neighbours
 
 
-def predicted_value(matrix):
-    print('My matrix:')
-    print_matrix(matrix)
-    columns = np.size(matrix, 1)
+def calculate_rating_prediction(k, map_ratings_neighbours):
 
-    for i in range(columns):
-        col = matrix[:, i]
-        select_k_neighbours(2, col)
-        # print('----------------------')
+    rating = 0
+    product = 1
+    numerator = 0
+    denominator = 0
+    all_ratings_list = []
+
+    for key in map_ratings_neighbours:
+        all_ratings_list.append(map_ratings_neighbours[key][1])
+    all_ratings_list.sort(reverse=True)
+
+    ratings_list = []   # the list with all the elements filtered by k
+
+    for element in all_ratings_list:
+        if element > k:
+            ratings_list.append(element)
+
+    for key in map_ratings_neighbours:
+        rating = map_ratings_neighbours[key][0]
+        similarity = map_ratings_neighbours[key][1]
+        if similarity in ratings_list:
+            numerator += rating * similarity
+            denominator += abs(similarity)
+
+    if denominator > 0:
+        rating = numerator / denominator
+    return rating
+
+
+def get_predicted_ratings(k, pearson_matrix, norm_matrix):
+    # 1st step: determine all the users that have rated the item we want to predict for user u
+    # for step 1, we will need the normalized matrix to see where the zeros are
+    # 2nd step: choose k users considering the sorted similarities
+    # 3rd step: calculate the predicted rating using the formula
+    # 4th step: denormalize the result
+
+    lines_norm = len(norm_matrix)
+    columns_norm = len(norm_matrix[0])
+
+    for i in range(lines_norm):
+        # list of column indexes of zero occurrences on every line
+        list_zero_col_indexes = np.where(norm_matrix[i] == 0)[0]
+        for j in list_zero_col_indexes:
+            map_ratings_neighbours = {}
+            list_same_column = list(zip(*norm_matrix))[:][j]    # the column of values that includes the 0
+
+            for m in range(lines_norm):
+                map_ratings_neighbours[m] = [list_same_column[m]]
+            map_ratings_neighbours = dict(filter(lambda elem: elem[1][0] != 0, map_ratings_neighbours.items()))
+
+            for key in map_ratings_neighbours:
+                map_ratings_neighbours[key].append(pearson_matrix[key][i])
+
+            # the map will have this structure {index: [rating, pearson_value]}
+            # {1: [4.0, 0.143]};  0.143 is the p. value between user 1 and the user we want to calculate the rating for
+            norm_matrix[i][j] = calculate_rating_prediction(k, map_ratings_neighbours)
+
+    return norm_matrix
 
 
 def main():
-    movie_matrix = read_matrix()
-    movie_matrix = empty_random(movie_matrix, 0.25)
-    norm_matrix = normalize_matrix(movie_matrix)
+    k = 0  # number of neighbours based on similarity (the value of pearson)
 
-    pearson_matrix = calculate_pearson_matrix(norm_matrix)
-    # print_matrix(pearson_matrix)
-    # print(count_zeros(pearson_matrix))
-    my_matrix = np.random.randint(100, size=(4, 10))
-    predicted_value(my_matrix)
+    my_matrix = read_matrix()
+    my_matrix = empty_random(my_matrix, 0.25)
+    # norm_matrix = normalize_matrix(my_matrix)
+    pearson_matrix = calculate_pearson_matrix(my_matrix)
+    final_matrix = get_predicted_ratings(k, pearson_matrix, my_matrix)
+    print("Final matrix")
+    print_matrix(final_matrix)
 
 
 main()
