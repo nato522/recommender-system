@@ -83,6 +83,10 @@ def denormalize_rating_row(predicted_rating, ratings):
     return normalized_rating
 
 
+def round_rating(rating):
+    return round(rating * 2) / 2
+
+
 def pearson(x, y):
 
     x_mean = get_average(x)
