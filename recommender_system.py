@@ -2,6 +2,8 @@ import itertools
 import random
 import numpy as np
 import math
+import excelwriter as ew
+import helpers as help
 
 # global variables for the number of lines and columns
 LINES = 50
@@ -79,12 +81,6 @@ def denormalize_rating_matrix(predicted_rating, matrix, user_index):
     return normalized_rating
 
 
-def denormalize_rating_row(predicted_rating, ratings):
-    avg = get_average(ratings)
-    normalized_rating = predicted_rating + avg
-    return normalized_rating
-
-
 def round_rating(rating):
     return round(rating * 2) / 2
 
@@ -127,24 +123,10 @@ def calculate_pearson_matrix(matrix):
 
 # helper function
 def print_matrix(matrix):
-    i_aux = 0
-    j_aux = 0
     for i_aux in range(len(matrix)):
         for j_aux in range(len(matrix[0])):
             print(matrix[i_aux][j_aux], end=" ")
         print()
-
-
-# helper function to check that 25% of the matrix is with the value 0
-def count_ones(matrix):
-    i_aux = 0
-    j_aux = 0
-    count = 0
-    for i_aux in range(len(matrix)):
-        for j_aux in range(len(matrix[0])):
-            if matrix[i_aux][j_aux] == 1.0:
-                count += 1
-    return count
 
 
 def select_k_neighbours(k, column):
@@ -225,22 +207,10 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix):
     return final_matrix, list_predicted_info
 
 
-def get_all_rated_movies(user_id, list_predicted_info):
-    if user_id > 50 or user_id < 0:
-        print("Wrong user id!")
-
-    map_all_rated_movies = {}  # hash map with the key = movie_id and value = predicted_rating
-
-    for info in list_predicted_info:
-        if user_id == info.user_id:
-            map_all_rated_movies[info.movie_id] = info.predicted_rating
-
-    return map_all_rated_movies
-
-
 def main():
     #################### Results with the 25% empty cells ####################
     k_25 = 0  # number of neighbours based on similarity (the value of pearson)
+    initial_matrix = read_matrix()
     movie_matrix_25 = read_matrix()
     movie_matrix_25 = empty_random(movie_matrix_25, 0.25)
     print_matrix(movie_matrix_25)
@@ -248,14 +218,8 @@ def main():
     pearson_matrix_25 = calculate_pearson_matrix(movie_matrix_25)
     final_matrix_25, list_predicted_info_25 = get_predicted_ratings(k_25, pearson_matrix_25, norm_matrix_25,
                                                                     movie_matrix_25)
-    print_matrix(final_matrix_25)
 
-    # helper function to get all the new ratings for a specific user with the associated movie
-    user_id_25 = 0
-    map_all_rated_movies_25 = get_all_rated_movies(user_id_25, list_predicted_info_25)
-    print("The predicted movies for the user ", user_id_25, "are ", map_all_rated_movies_25)
-    for key in map_all_rated_movies_25:
-        print(user_id_25, " ", key, " ", map_all_rated_movies_25[key])
+    ew.generate_results_25(initial_matrix, movie_matrix_25, pearson_matrix_25, final_matrix_25, list_predicted_info_25)
 
     #################### Results with the 75% empty cells ####################
     k_75 = 0  # number of neighbours based on similarity (the value of pearson)
@@ -265,14 +229,8 @@ def main():
     pearson_matrix_75 = calculate_pearson_matrix(movie_matrix_75)
     final_matrix_75, list_predicted_info_75 = get_predicted_ratings(k_75, pearson_matrix_75, norm_matrix_75,
                                                                     movie_matrix_75)
-    print_matrix(final_matrix_75)
 
-    # helper function to get all the new ratings for a specific user with the associated movie
-    user_id_75 = 0
-    map_all_rated_movies_75 = get_all_rated_movies(user_id_75, list_predicted_info_75)
-    print("The predicted movies for the user ", user_id_75, "are ", map_all_rated_movies_75)
-    for key in map_all_rated_movies_75:
-        print(user_id_75, " ", key, " ", map_all_rated_movies_75[key])
+    ew.generate_results_75(initial_matrix, movie_matrix_75, pearson_matrix_75, final_matrix_75, list_predicted_info_75)
 
 
 class PredictedInfo:
