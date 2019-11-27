@@ -92,6 +92,8 @@ def fill_final_matrix(workbook, matrix, predicted_ratings):
 
 def fill_predicted_ratings(workbook, ratings):
     ordered_predicted_ratings = workbook.add_worksheet('Predicted ratings')
+    column_size = len(max(titles, key=len)) + 5
+    ordered_predicted_ratings.set_column('A:T', column_size)
     for user in range(50):
         map_rated_movies = hf.get_all_rated_movies(user, ratings)
         sorted_list_rated_movies = sorted(map_rated_movies.items(), key=operator.itemgetter(1))
