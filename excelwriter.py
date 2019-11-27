@@ -2,6 +2,7 @@ import xlsxwriter
 
 EMPTY_25 = 0
 EMPTY_75 = 1
+titles = []
 
 workbook_25 = xlsxwriter.Workbook('./results/rating_analysis_25.xlsx')
 workbook_75 = xlsxwriter.Workbook('./results/rating_analysis_75.xlsx')
@@ -23,8 +24,8 @@ final_matrix_25 = workbook_25.add_worksheet('Final matrix')
 final_matrix_75 = workbook_75.add_worksheet('Final matrix')
 
 # Fifth sheet for the set of predicted ratings per user
-ordered_predicted_ratings_25 = workbook_25.add_worksheet()
-ordered_predicted_ratings_75 = workbook_75.add_worksheet()
+ordered_predicted_ratings_25 = workbook_25.add_worksheet('Predicted ratings')
+ordered_predicted_ratings_75 = workbook_75.add_worksheet('Predicted ratings')
 
 
 # Format rules
@@ -39,7 +40,6 @@ predicted_rating_format_25.set_bg_color('yellow')
 predicted_rating_format_75.set_bg_color('yellow')
 
 def get_titles():
-    titles = []
     filepath = 'matrix.txt'
 
     fp = open(filepath)
@@ -119,6 +119,7 @@ def fill_predicted_ratings(ratings, flag):
     else:
         ordered_predicted_ratings_75.write()
     pass
+
 
 def highlight_predicted_ratings(ratings, flag):
     '''
