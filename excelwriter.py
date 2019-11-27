@@ -1,10 +1,19 @@
 import xlsxwriter
 import helpers as help
 import operator
+import os
 
 EMPTY_25 = 0
 EMPTY_75 = 1
 titles = []
+
+path = "./results"
+try:
+    os.mkdir(path)
+except OSError:
+    print("Creation of the directory %s failed" % path)
+else:
+    print("Successfully created the directory %s " % path)
 
 workbook_25 = xlsxwriter.Workbook('./results/rating_analysis_25.xlsx')
 workbook_75 = xlsxwriter.Workbook('./results/rating_analysis_75.xlsx')
