@@ -1,5 +1,6 @@
 import xlsxwriter
 import helper_functions as hf
+import evaluation_functions as evalf
 import operator
 import os
 from datetime import datetime
@@ -108,6 +109,31 @@ def highlight_predicted_ratings(worksheet, ratings, rating_format):
     return
 
 
+def evaluate_rs(workbook, original_matrix, ratings):
+    evaluation_results = workbook.add_worksheet('Evaluation')
+    prediction_errors = []
+    row = 2
+    for rating in ratings:
+        prediction_error = evalf.prediction_error(rating, original_matrix)
+        evaluation_results.write(row, 0, rating.user_id)
+        evaluation_results.write(row, 1, titles[rating.movie_id])
+        evaluation_results.write(row, 2, original_matrix[rating.user_id][rating.movie_id])
+        evaluation_results.write(row, 3, rating.predicted_rating)
+        evaluation_results.write(row, 4, prediction_error)
+        prediction_errors.append(prediction_error)
+        row += 1
+
+    mae = evalf.mae(prediction_errors)
+    evaluation_results.write('A1', 'MAE:')
+    evaluation_results.write('B1', mae)
+    evaluation_results.write('A2', 'User ID')
+    evaluation_results.write('B2', 'Movie')
+    evaluation_results.write('C2', 'Real rating')
+    evaluation_results.write('D2', 'Predicted rating')
+    evaluation_results.write('E2', 'Prediction error')
+    pass
+
+
 def generate_results_25(initial_matrix, empty_matrix, pc_matrix, final_matrix, predicted_ratings, k):
     now = datetime.now().microsecond
     workbook_25 = xlsxwriter.Workbook('./results/rating_analysis_25_' + str(k) + '_' + str(now) + '.xlsx')
@@ -116,6 +142,7 @@ def generate_results_25(initial_matrix, empty_matrix, pc_matrix, final_matrix, p
     fill_pc_matrix(workbook_25, pc_matrix)
     fill_final_matrix(workbook_25, final_matrix, predicted_ratings)
     fill_predicted_ratings(workbook_25, predicted_ratings)
+    evaluate_rs(workbook_25, initial_matrix, predicted_ratings)
     workbook_25.close()
 
 
@@ -127,4 +154,5 @@ def generate_results_75(initial_matrix, empty_matrix, pc_matrix, final_matrix, p
     fill_pc_matrix(workbook_75, pc_matrix)
     fill_final_matrix(workbook_75, final_matrix, predicted_ratings)
     fill_predicted_ratings(workbook_75, predicted_ratings)
+    evaluate_rs(workbook_75, initial_matrix, predicted_ratings)
     workbook_75.close()

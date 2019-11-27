@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def get_all_rated_movies(user_id, list_predicted_info):
     if user_id > 50 or user_id < 0:
         print("Wrong user id!")
