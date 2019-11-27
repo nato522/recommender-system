@@ -1,5 +1,5 @@
 import xlsxwriter
-import helpers as help
+import helper_functions as hf
 import operator
 import os
 from datetime import datetime
@@ -92,7 +92,7 @@ def fill_final_matrix(workbook, matrix, predicted_ratings):
 def fill_predicted_ratings(workbook, ratings):
     ordered_predicted_ratings = workbook.add_worksheet('Predicted ratings')
     for user in range(50):
-        map_rated_movies = help.get_all_rated_movies(user, ratings)
+        map_rated_movies = hf.get_all_rated_movies(user, ratings)
         sorted_list_rated_movies = sorted(map_rated_movies.items(), key=operator.itemgetter(1))
         index = 0
         for movie, rating in sorted_list_rated_movies:
@@ -104,7 +104,6 @@ def fill_predicted_ratings(workbook, ratings):
 
 def highlight_predicted_ratings(worksheet, ratings, rating_format):
     for rating in ratings:
-        # TODO: add format for highligth
         worksheet.write(rating.user_id + 1, rating.movie_id, rating.predicted_rating, rating_format)
     return
 
