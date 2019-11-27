@@ -163,9 +163,11 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix):
     # 4th step: denormalize the result
 
     list_predicted_info = []
+    list_non_rounded_predicted_info = []
     lines_norm = len(norm_matrix)
     columns_norm = len(norm_matrix[0])
     final_matrix = movie_matrix.copy()
+    non_rounded_matrix = movie_matrix.copy()
 
     for i in range(lines_norm):
         # list of column indexes of zero occurrences on every line
@@ -185,10 +187,16 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix):
             # {1: [4.0, 0.143]};  0.143 is the p. value between user 1 and the user we want to calculate the rating for
             rating = calculate_rating_prediction(k, map_ratings_neighbours)
             denormalized_rating = denormalize_rating_matrix(rating, movie_matrix, i)
+
+            non_rounded_matrix[i][j] = denormalized_rating
+            non_rounded_predicted_info_obj = PredictedInfo(i, j, non_rounded_matrix[i][j])
+            list_non_rounded_predicted_info.append(non_rounded_predicted_info_obj)
+
             final_matrix[i][j] = hf.round_rating(denormalized_rating)
             predicted_info_obj = PredictedInfo(i, j, final_matrix[i][j])
             list_predicted_info.append(predicted_info_obj)
-    return final_matrix, list_predicted_info
+
+    return final_matrix, list_predicted_info, list_non_rounded_predicted_info
 
 
 def main():
@@ -200,10 +208,11 @@ def main():
     norm_matrix_25 = normalize_matrix(movie_matrix_25)
     pearson_matrix_25 = calculate_pearson_matrix(movie_matrix_25)
     for k in k_25:
-        final_matrix_25, list_predicted_info_25 = get_predicted_ratings(k, pearson_matrix_25, norm_matrix_25,
-                                                                        movie_matrix_25)
+        final_matrix_25, list_predicted_info_25, list_non_rounded_info_25 = get_predicted_ratings(k, pearson_matrix_25,
+                                                                                                  norm_matrix_25,
+                                                                                                  movie_matrix_25)
         ew.generate_results_25(initial_matrix, movie_matrix_25, pearson_matrix_25, final_matrix_25,
-                               list_predicted_info_25, k)
+                               list_predicted_info_25, list_non_rounded_info_25, k)
 
     #################### Results with the 75% empty cells ####################
     k_75 = [0, 0.3, 0.6]  # number of neighbours based on similarity (the value of pearson)
@@ -212,10 +221,11 @@ def main():
     norm_matrix_75 = normalize_matrix(movie_matrix_75)
     pearson_matrix_75 = calculate_pearson_matrix(movie_matrix_75)
     for n in k_75:
-        final_matrix_75, list_predicted_info_75 = get_predicted_ratings(n, pearson_matrix_75, norm_matrix_75,
-                                                                        movie_matrix_75)
+        final_matrix_75, list_predicted_info_75, list_non_rounded_info_75 = get_predicted_ratings(n, pearson_matrix_75,
+                                                                                                  norm_matrix_75,
+                                                                                                  movie_matrix_75)
         ew.generate_results_75(initial_matrix, movie_matrix_75, pearson_matrix_75, final_matrix_75,
-                               list_predicted_info_75, n)
+                               list_predicted_info_75, list_non_rounded_info_75, n)
 
 
 class PredictedInfo:

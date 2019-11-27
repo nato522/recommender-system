@@ -134,7 +134,7 @@ def evaluate_rs(workbook, original_matrix, ratings):
     pass
 
 
-def generate_results_25(initial_matrix, empty_matrix, pc_matrix, final_matrix, predicted_ratings, k):
+def generate_results_25(initial_matrix, empty_matrix, pc_matrix, final_matrix, predicted_ratings, non_rounded_info, k):
     now = datetime.now().microsecond
     workbook_25 = xlsxwriter.Workbook('./results/rating_analysis_25_' + str(k) + '_' + str(now) + '.xlsx')
     fill_initial_matrix(workbook_25, initial_matrix)
@@ -142,11 +142,11 @@ def generate_results_25(initial_matrix, empty_matrix, pc_matrix, final_matrix, p
     fill_pc_matrix(workbook_25, pc_matrix)
     fill_final_matrix(workbook_25, final_matrix, predicted_ratings)
     fill_predicted_ratings(workbook_25, predicted_ratings)
-    evaluate_rs(workbook_25, initial_matrix, predicted_ratings)
+    evaluate_rs(workbook_25, initial_matrix, non_rounded_info)
     workbook_25.close()
 
 
-def generate_results_75(initial_matrix, empty_matrix, pc_matrix, final_matrix, predicted_ratings, n):
+def generate_results_75(initial_matrix, empty_matrix, pc_matrix, final_matrix, predicted_ratings, non_rounded_info, n):
     now = datetime.now().microsecond
     workbook_75 = xlsxwriter.Workbook('./results/rating_analysis_75_' + str(n) + '_' + str(now) + '.xlsx')
     fill_initial_matrix(workbook_75, initial_matrix)
@@ -154,5 +154,5 @@ def generate_results_75(initial_matrix, empty_matrix, pc_matrix, final_matrix, p
     fill_pc_matrix(workbook_75, pc_matrix)
     fill_final_matrix(workbook_75, final_matrix, predicted_ratings)
     fill_predicted_ratings(workbook_75, predicted_ratings)
-    evaluate_rs(workbook_75, initial_matrix, predicted_ratings)
+    evaluate_rs(workbook_75, initial_matrix, non_rounded_info)
     workbook_75.close()
