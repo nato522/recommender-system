@@ -1,5 +1,6 @@
 import xlsxwriter
 import helpers as help
+import operator
 
 EMPTY_25 = 0
 EMPTY_75 = 1
@@ -111,15 +112,15 @@ def fill_final_matrix(matrix, flag):
 def fill_predicted_ratings(ratings, flag):
     for user in range(50):
         map_rated_movies = help.get_all_rated_movies(user, ratings)
-        # map_rated_movies.values()
-        print(map_rated_movies.values())
-        #for key in map_rated_movies:
-        '''
-        if flag is EMPTY_25:
-            ordered_predicted_ratings_25.write(user)
-        else:
-            ordered_predicted_ratings_75.write()
-        '''
+        sorted_list_rated_movies = sorted(map_rated_movies.items(), key=operator.itemgetter(1))
+        index = 0
+        for movie, rating in sorted_list_rated_movies:
+            content = titles[movie] + ': ' + str(rating)
+            if flag is EMPTY_25:
+                ordered_predicted_ratings_25.write(user, index, content)
+            else:
+                ordered_predicted_ratings_75.write(user, index, content)
+            index += 1
     pass
 
 
@@ -151,5 +152,5 @@ def generate_results_75(initial_matrix, empty_matrix, pc_matrix, final_matrix, p
     fill_pc_matrix(pc_matrix, EMPTY_75)
     fill_final_matrix(final_matrix, EMPTY_75)
     highlight_predicted_ratings(predicted_ratings, EMPTY_75)
-    # fill_predicted_ratings(predicted_ratings, EMPTY_75)
+    fill_predicted_ratings(predicted_ratings, EMPTY_75)
     workbook_75.close()
