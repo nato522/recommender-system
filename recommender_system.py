@@ -3,7 +3,6 @@ import random
 import numpy as np
 import math
 import excelwriter as ew
-import helpers as help
 
 # global variables for the number of lines and columns
 LINES = 50
