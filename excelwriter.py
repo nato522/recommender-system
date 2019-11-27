@@ -111,7 +111,10 @@ def highlight_predicted_ratings(worksheet, ratings, rating_format):
 
 def evaluate_rs(workbook, original_matrix, ratings):
     evaluation_results = workbook.add_worksheet('Evaluation')
+    title_format = workbook.add_format()
+    title_format.set_bold()
     prediction_errors = []
+    longest_title = max(titles, key=len)
     row = 2
     for rating in ratings:
         prediction_error = evalf.prediction_error(rating, original_matrix)
@@ -124,13 +127,18 @@ def evaluate_rs(workbook, original_matrix, ratings):
         row += 1
 
     mae = evalf.mae(prediction_errors)
-    evaluation_results.write('A1', 'MAE:')
+    evaluation_results.write('A1', 'MAE:', title_format)
     evaluation_results.write('B1', mae)
-    evaluation_results.write('A2', 'User ID')
-    evaluation_results.write('B2', 'Movie')
-    evaluation_results.write('C2', 'Real rating')
-    evaluation_results.write('D2', 'Predicted rating')
-    evaluation_results.write('E2', 'Prediction error')
+    evaluation_results.write('A2', 'User ID', title_format)
+    evaluation_results.set_column('A:A', len('User ID'))
+    evaluation_results.write('B2', 'Movie title', title_format)
+    evaluation_results.set_column('B:B', len(longest_title))
+    evaluation_results.write('C2', 'Real rating', title_format)
+    evaluation_results.set_column('C:C', len('Real rating'))
+    evaluation_results.write('D2', 'Predicted rating', title_format)
+    evaluation_results.set_column('D:D', len('Predicted rating'))
+    evaluation_results.write('E2', 'Prediction error', title_format)
+    evaluation_results.set_column('E:E', len('Prediction error'))
     pass
 
 
