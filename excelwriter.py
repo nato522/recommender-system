@@ -1,4 +1,5 @@
 import xlsxwriter
+import helpers as help
 
 EMPTY_25 = 0
 EMPTY_75 = 1
@@ -73,7 +74,7 @@ def fill_initial_matrix(matrix, flag):
             if flag is EMPTY_25:
                 initial_matrix_25.write(row+1, column, matrix[row][column])
             else:
-                initial_matrix_75.write(row + 1, column, matrix[row][column])
+                initial_matrix_75.write(row+1, column, matrix[row][column])
     return
 
 
@@ -83,7 +84,7 @@ def fill_empty_matrix(matrix, flag):
             if flag is EMPTY_25:
                 empty_matrix_25.write(row+1, column, matrix[row][column])
             else:
-                empty_matrix_75.write(row + 1, column, matrix[row][column])
+                empty_matrix_75.write(row+1, column, matrix[row][column])
     return
 
 
@@ -103,35 +104,32 @@ def fill_final_matrix(matrix, flag):
             if flag is EMPTY_25:
                 final_matrix_25.write(row+1, column, matrix[row][column])
             else:
-                final_matrix_75.write(row + 1, column, matrix[row][column])
+                final_matrix_75.write(row+1, column, matrix[row][column])
     return
 
 
 def fill_predicted_ratings(ratings, flag):
-    '''
-    TODO: iterate the list of object to show predicted ratings in order
-    :param ratings: list of objects with userId, movieId, and predicted rating
-    :param flag: file identifier
-    :return: nothing, just writes the predicted ratings in descending order in the corresponding sheet
-    '''
-    if flag is EMPTY_25:
-        ordered_predicted_ratings_25.write()
-    else:
-        ordered_predicted_ratings_75.write()
+    for user in range(50):
+        map_rated_movies = help.get_all_rated_movies(user, ratings)
+        # map_rated_movies.values()
+        print(map_rated_movies.values())
+        #for key in map_rated_movies:
+        '''
+        if flag is EMPTY_25:
+            ordered_predicted_ratings_25.write(user)
+        else:
+            ordered_predicted_ratings_75.write()
+        '''
     pass
 
 
 def highlight_predicted_ratings(ratings, flag):
-    '''
-    TODO: iterate the list of object to identify cell location
-    :param ratings: list of objects with userId, movieId, and predicted rating
-    :param flag: file identifier
-    :return: nothing, just adds format to the predicted ratings' cells
-    '''
     if flag is EMPTY_25:
-        final_matrix_25.write(user, movie, predicted_rating_format_25)
+        for rating in ratings:
+            final_matrix_25.write(rating.user_id + 1, rating.movie_id, rating.predicted_rating, predicted_rating_format_25)
     else:
-        final_matrix_75.write(user, movie, predicted_rating_format_75)
+        for rating in ratings:
+            final_matrix_75.write(rating.user_id + 1, rating.movie_id, rating.predicted_rating, predicted_rating_format_75)
     pass
 
 
@@ -141,8 +139,8 @@ def generate_results_25(initial_matrix, empty_matrix, pc_matrix, final_matrix, p
     fill_empty_matrix(empty_matrix, EMPTY_25)
     fill_pc_matrix(pc_matrix, EMPTY_25)
     fill_final_matrix(final_matrix, EMPTY_25)
-    # highlight_predicted_ratings(predicted_ratings, EMPTY_25)
-    # fill_predicted_ratings(predicted_ratings, EMPTY_25)
+    highlight_predicted_ratings(predicted_ratings, EMPTY_25)
+    fill_predicted_ratings(predicted_ratings, EMPTY_25)
     workbook_25.close()
 
 
@@ -152,6 +150,6 @@ def generate_results_75(initial_matrix, empty_matrix, pc_matrix, final_matrix, p
     fill_empty_matrix(empty_matrix, EMPTY_75)
     fill_pc_matrix(pc_matrix, EMPTY_75)
     fill_final_matrix(final_matrix, EMPTY_75)
-    # highlight_predicted_ratings(predicted_ratings, EMPTY_75)
+    highlight_predicted_ratings(predicted_ratings, EMPTY_75)
     # fill_predicted_ratings(predicted_ratings, EMPTY_75)
     workbook_75.close()
