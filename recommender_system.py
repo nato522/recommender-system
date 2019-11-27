@@ -82,6 +82,8 @@ def denormalize_rating_matrix(predicted_rating, matrix, user_index):
 
 
 def round_rating(rating):
+    if rating >= 5:
+        return 5
     return round(rating * 2) / 2
 
 
@@ -209,28 +211,28 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix):
 
 def main():
     #################### Results with the 25% empty cells ####################
-    k_25 = 0  # number of neighbours based on similarity (the value of pearson)
+    k_25 = [0, 0.3, 0.6]  # number of neighbours based on similarity (the value of pearson)
     initial_matrix = read_matrix()
     movie_matrix_25 = read_matrix()
     movie_matrix_25 = empty_random(movie_matrix_25, 0.25)
     print_matrix(movie_matrix_25)
     norm_matrix_25 = normalize_matrix(movie_matrix_25)
     pearson_matrix_25 = calculate_pearson_matrix(movie_matrix_25)
-    final_matrix_25, list_predicted_info_25 = get_predicted_ratings(k_25, pearson_matrix_25, norm_matrix_25,
+    for k in k_25:
+        final_matrix_25, list_predicted_info_25 = get_predicted_ratings(k, pearson_matrix_25, norm_matrix_25,
                                                                     movie_matrix_25)
-
-    ew.generate_results_25(initial_matrix, movie_matrix_25, pearson_matrix_25, final_matrix_25, list_predicted_info_25)
+        ew.generate_results_25(initial_matrix, movie_matrix_25, pearson_matrix_25, final_matrix_25, list_predicted_info_25, k)
 
     #################### Results with the 75% empty cells ####################
-    k_75 = 0  # number of neighbours based on similarity (the value of pearson)
+    k_75 = [0, 0.3, 0.6]  # number of neighbours based on similarity (the value of pearson)
     movie_matrix_75 = read_matrix()
     movie_matrix_75 = empty_random(movie_matrix_75, 0.75)
     norm_matrix_75 = normalize_matrix(movie_matrix_75)
     pearson_matrix_75 = calculate_pearson_matrix(movie_matrix_75)
-    final_matrix_75, list_predicted_info_75 = get_predicted_ratings(k_75, pearson_matrix_75, norm_matrix_75,
+    for n in k_75:
+        final_matrix_75, list_predicted_info_75 = get_predicted_ratings(n, pearson_matrix_75, norm_matrix_75,
                                                                     movie_matrix_75)
-
-    ew.generate_results_75(initial_matrix, movie_matrix_75, pearson_matrix_75, final_matrix_75, list_predicted_info_75)
+        ew.generate_results_75(initial_matrix, movie_matrix_75, pearson_matrix_75, final_matrix_75, list_predicted_info_75, n)
 
 
 class PredictedInfo:
