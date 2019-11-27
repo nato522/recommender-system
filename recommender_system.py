@@ -2,6 +2,7 @@ import itertools
 import random
 import numpy as np
 import math
+import excelwriter as ew
 
 # global variables for the number of lines and columns
 LINES = 50
@@ -96,6 +97,7 @@ def pearson(x, y):
     numerator = 0
     sum_den_x = 0
     sum_den_y = 0
+    pearson_result = 0
     for ele in range(0, len(x)):
         # we need to ignore the elements that are not rated by both users
         if x[ele] != 0 and y[ele] != 0:
@@ -103,9 +105,9 @@ def pearson(x, y):
             sum_den_x += pow((x[ele] - x_mean), 2)
             sum_den_y += pow((y[ele] - y_mean), 2)
 
-    denominator = math.sqrt(sum_den_x * sum_den_y)
-
-    pearson_result = numerator / denominator
+        denominator = math.sqrt(sum_den_x * sum_den_y)
+    if denominator != 0:
+        pearson_result = numerator / denominator
     return pearson_result
 
 
@@ -160,7 +162,6 @@ def select_k_neighbours(k, column):
 
 
 def calculate_rating_prediction(k, map_ratings_neighbours):
-
     rating = 0
     product = 1
     numerator = 0
@@ -171,7 +172,7 @@ def calculate_rating_prediction(k, map_ratings_neighbours):
         all_ratings_list.append(map_ratings_neighbours[key][1])
     all_ratings_list.sort(reverse=True)
 
-    ratings_list = []   # the list with all the elements filtered by k
+    ratings_list = []  # the list with all the elements filtered by k
 
     for element in all_ratings_list:
         if element > k:
@@ -184,27 +185,29 @@ def calculate_rating_prediction(k, map_ratings_neighbours):
             numerator += rating * similarity
             denominator += abs(similarity)
 
-    if denominator > 0:
+    if denominator != 0:
         rating = numerator / denominator
     return rating
 
 
-def get_predicted_ratings(k, pearson_matrix, norm_matrix):
+def get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix):
     # 1st step: determine all the users that have rated the item we want to predict for user u
     # for step 1, we will need the normalized matrix to see where the zeros are
     # 2nd step: choose k users considering the sorted similarities
     # 3rd step: calculate the predicted rating using the formula
     # 4th step: denormalize the result
 
+    list_predicted_info = []
     lines_norm = len(norm_matrix)
     columns_norm = len(norm_matrix[0])
+    final_matrix = movie_matrix.copy()
 
     for i in range(lines_norm):
         # list of column indexes of zero occurrences on every line
         list_zero_col_indexes = np.where(norm_matrix[i] == 0)[0]
         for j in list_zero_col_indexes:
             map_ratings_neighbours = {}
-            list_same_column = list(zip(*norm_matrix))[:][j]    # the column of values that includes the 0
+            list_same_column = list(zip(*norm_matrix))[:][j]  # the column of values that includes the 0
 
             for m in range(lines_norm):
                 map_ratings_neighbours[m] = [list_same_column[m]]
@@ -215,21 +218,74 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix):
 
             # the map will have this structure {index: [rating, pearson_value]}
             # {1: [4.0, 0.143]};  0.143 is the p. value between user 1 and the user we want to calculate the rating for
-            norm_matrix[i][j] = calculate_rating_prediction(k, map_ratings_neighbours)
+            rating = calculate_rating_prediction(k, map_ratings_neighbours)
+            denormalized_rating = denormalize_rating_matrix(rating, movie_matrix, i)
+            final_matrix[i][j] = round_rating(denormalized_rating)
+            predicted_info_obj = PredictedInfo(i, j, final_matrix[i][j])
+            list_predicted_info.append(predicted_info_obj)
+    return final_matrix, list_predicted_info
 
-    return norm_matrix
+
+def get_all_rated_movies(user_id, list_predicted_info):
+    if user_id > 50 or user_id < 0:
+        print("Wrong user id!")
+
+    map_all_rated_movies = {}  # hash map with the key = movie_id and value = predicted_rating
+
+    for info in list_predicted_info:
+        if user_id == info.user_id:
+            map_all_rated_movies[info.movie_id] = info.predicted_rating
+
+    return map_all_rated_movies
 
 
 def main():
-    k = 0  # number of neighbours based on similarity (the value of pearson)
+    #################### Results with the 25% empty cells ####################
+    k_25 = 0  # number of neighbours based on similarity (the value of pearson)
+    initial_matrix = read_matrix()
+    movie_matrix_25 = read_matrix()
+    movie_matrix_25 = empty_random(movie_matrix_25, 0.25)
+    print_matrix(movie_matrix_25)
+    norm_matrix_25 = normalize_matrix(movie_matrix_25)
+    pearson_matrix_25 = calculate_pearson_matrix(movie_matrix_25)
+    final_matrix_25, list_predicted_info_25 = get_predicted_ratings(k_25, pearson_matrix_25, norm_matrix_25,
+                                                                    movie_matrix_25)
+    print_matrix(final_matrix_25)
 
-    my_matrix = read_matrix()
-    my_matrix = empty_random(my_matrix, 0.25)
-    # norm_matrix = normalize_matrix(my_matrix)
-    pearson_matrix = calculate_pearson_matrix(my_matrix)
-    final_matrix = get_predicted_ratings(k, pearson_matrix, my_matrix)
-    print("Final matrix")
-    print_matrix(final_matrix)
+    # helper function to get all the new ratings for a specific user with the associated movie
+    user_id_25 = 0
+    map_all_rated_movies_25 = get_all_rated_movies(user_id_25, list_predicted_info_25)
+    print("The predicted movies for the user ", user_id_25, "are ", map_all_rated_movies_25)
+    for key in map_all_rated_movies_25:
+        print(user_id_25, " ", key, " ", map_all_rated_movies_25[key])
+
+    ew.generate_results_25(initial_matrix, movie_matrix_25, pearson_matrix_25, final_matrix_25)
+
+    #################### Results with the 75% empty cells ####################
+    k_75 = 0  # number of neighbours based on similarity (the value of pearson)
+    movie_matrix_75 = read_matrix()
+    movie_matrix_75 = empty_random(movie_matrix_75, 0.75)
+    norm_matrix_75 = normalize_matrix(movie_matrix_75)
+    pearson_matrix_75 = calculate_pearson_matrix(movie_matrix_75)
+    final_matrix_75, list_predicted_info_75 = get_predicted_ratings(k_75, pearson_matrix_75, norm_matrix_75,
+                                                                    movie_matrix_75)
+    print_matrix(final_matrix_75)
+
+    # helper function to get all the new ratings for a specific user with the associated movie
+    user_id_75 = 0
+    map_all_rated_movies_75 = get_all_rated_movies(user_id_75, list_predicted_info_75)
+    print("The predicted movies for the user ", user_id_75, "are ", map_all_rated_movies_75)
+    for key in map_all_rated_movies_75:
+        print(user_id_75, " ", key, " ", map_all_rated_movies_75[key])
+
+    ew.generate_results_75(initial_matrix, movie_matrix_75, pearson_matrix_75, final_matrix_75)
 
 
-# main()
+class PredictedInfo:
+    def __init__(self, user_id, movie_id, predicted_rating):
+        self.user_id = user_id
+        self.movie_id = movie_id
+        self.predicted_rating = predicted_rating
+
+
+main()
