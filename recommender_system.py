@@ -259,7 +259,7 @@ def main():
     for key in map_all_rated_movies_25:
         print(user_id_25, " ", key, " ", map_all_rated_movies_25[key])
 
-    ew.generate_results_25(initial_matrix, movie_matrix_25, pearson_matrix_25, final_matrix_25)
+    ew.generate_results_25(initial_matrix, movie_matrix_25, pearson_matrix_25, final_matrix_25, list_predicted_info_25)
 
     #################### Results with the 75% empty cells ####################
     k_75 = 0  # number of neighbours based on similarity (the value of pearson)
@@ -278,7 +278,7 @@ def main():
     for key in map_all_rated_movies_75:
         print(user_id_75, " ", key, " ", map_all_rated_movies_75[key])
 
-    ew.generate_results_75(initial_matrix, movie_matrix_75, pearson_matrix_75, final_matrix_75)
+    ew.generate_results_75(initial_matrix, movie_matrix_75, pearson_matrix_75, final_matrix_75, list_predicted_info_75)
 
 
 class PredictedInfo:

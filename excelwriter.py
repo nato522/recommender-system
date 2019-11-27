@@ -27,6 +27,17 @@ ordered_predicted_ratings_25 = workbook_25.add_worksheet()
 ordered_predicted_ratings_75 = workbook_75.add_worksheet()
 
 
+# Format rules
+title_format_25 = workbook_25.add_format()
+title_format_75 = workbook_75.add_format()
+predicted_rating_format_25 = workbook_25.add_format()
+predicted_rating_format_75 = workbook_75.add_format()
+
+title_format_25.set_bold()
+title_format_75.set_bold()
+predicted_rating_format_25.set_bg_color('yellow')
+predicted_rating_format_75.set_bg_color('yellow')
+
 def get_titles():
     titles = []
     filepath = 'matrix.txt'
@@ -45,13 +56,13 @@ def set_movie_titles():
     titles = get_titles()
     i = 0
     for title in titles:
-        initial_matrix_25.write(0, i, title)
-        empty_matrix_25.write(0, i, title)
-        final_matrix_25.write(0, i, title)
+        initial_matrix_25.write(0, i, title, title_format_25)
+        empty_matrix_25.write(0, i, title, title_format_25)
+        final_matrix_25.write(0, i, title, title_format_25)
 
-        initial_matrix_75.write(0, i, title)
-        empty_matrix_75.write(0, i, title)
-        final_matrix_75.write(0, i, title)
+        initial_matrix_75.write(0, i, title, title_format_75)
+        empty_matrix_75.write(0, i, title, title_format_75)
+        final_matrix_75.write(0, i, title, title_format_75)
         i += 1
     return
 
@@ -96,19 +107,50 @@ def fill_final_matrix(matrix, flag):
     return
 
 
-def generate_results_25(initial_matrix, empty_matrix, pc_matrix, final_matrix):
+def fill_predicted_ratings(ratings, flag):
+    '''
+    TODO: iterate the list of object to show predicted ratings in order
+    :param ratings: list of objects with userId, movieId, and predicted rating
+    :param flag: file identifier
+    :return: nothing, just writes the predicted ratings in descending order in the corresponding sheet
+    '''
+    if flag is EMPTY_25:
+        ordered_predicted_ratings_25.write()
+    else:
+        ordered_predicted_ratings_75.write()
+    pass
+
+def highlight_predicted_ratings(ratings, flag):
+    '''
+    TODO: iterate the list of object to identify cell location
+    :param ratings: list of objects with userId, movieId, and predicted rating
+    :param flag: file identifier
+    :return: nothing, just adds format to the predicted ratings' cells
+    '''
+    if flag is EMPTY_25:
+        final_matrix_25.write(user, movie, predicted_rating_format_25)
+    else:
+        final_matrix_75.write(user, movie, predicted_rating_format_75)
+    pass
+
+
+def generate_results_25(initial_matrix, empty_matrix, pc_matrix, final_matrix, predicted_ratings):
     set_movie_titles()
     fill_initial_matrix(initial_matrix, EMPTY_25)
     fill_empty_matrix(empty_matrix, EMPTY_25)
     fill_pc_matrix(pc_matrix, EMPTY_25)
     fill_final_matrix(final_matrix, EMPTY_25)
+    # highlight_predicted_ratings(predicted_ratings, EMPTY_25)
+    # fill_predicted_ratings(predicted_ratings, EMPTY_25)
     workbook_25.close()
 
 
-def generate_results_75(initial_matrix, empty_matrix, pc_matrix, final_matrix):
+def generate_results_75(initial_matrix, empty_matrix, pc_matrix, final_matrix, predicted_ratings):
     set_movie_titles()
     fill_initial_matrix(initial_matrix, EMPTY_75)
     fill_empty_matrix(empty_matrix, EMPTY_75)
     fill_pc_matrix(pc_matrix, EMPTY_75)
     fill_final_matrix(final_matrix, EMPTY_75)
+    # highlight_predicted_ratings(predicted_ratings, EMPTY_75)
+    # fill_predicted_ratings(predicted_ratings, EMPTY_75)
     workbook_75.close()
