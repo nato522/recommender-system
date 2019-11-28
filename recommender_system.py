@@ -84,6 +84,7 @@ def pearson(x, y):
     numerator = 0
     sum_den_x = 0
     sum_den_y = 0
+    denominator = 0
     pearson_result = 0
     for ele in range(0, len(x)):
         # we need to ignore the elements that are not rated by both users
@@ -200,7 +201,7 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix):
 
 
 def main():
-    #################### Results with the 25% empty cells ####################
+    """ Results with the 25% empty cells """
     k_25 = [0, 0.3, 0.6]  # number of neighbours based on similarity (the value of pearson)
     initial_matrix = read_matrix()
     movie_matrix_25 = read_matrix()
@@ -214,7 +215,7 @@ def main():
         ew.generate_results_25(initial_matrix, movie_matrix_25, pearson_matrix_25, final_matrix_25,
                                list_predicted_info_25, list_non_rounded_info_25, k)
 
-    #################### Results with the 75% empty cells ####################
+    """ Results with the 75% empty cells """
     k_75 = [0, 0.3, 0.6]  # number of neighbours based on similarity (the value of pearson)
     movie_matrix_75 = read_matrix()
     movie_matrix_75 = empty_random(movie_matrix_75, 0.75)

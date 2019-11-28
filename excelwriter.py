@@ -16,6 +16,7 @@ else:
     print("Successfully created the directory %s " % path)
 
 
+
 def get_titles():
     filepath = 'matrix.txt'
 
