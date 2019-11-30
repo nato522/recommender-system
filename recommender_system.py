@@ -202,7 +202,7 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix):
 
 def main():
     """ Results with the 25% empty cells """
-    k_25 = [0, 0.3, 0.6]  # number of neighbours based on similarity (the value of pearson)
+    k_25 = [0, 0.3, 0.6]  # the threshold value based on similarity (the value of pearson)
     initial_matrix = read_matrix()
     movie_matrix_25 = read_matrix()
     movie_matrix_25 = empty_random(movie_matrix_25, 0.25)
@@ -216,7 +216,7 @@ def main():
                                list_predicted_info_25, list_non_rounded_info_25, k)
 
     """ Results with the 75% empty cells """
-    k_75 = [0, 0.3, 0.6]  # number of neighbours based on similarity (the value of pearson)
+    k_75 = [0, 0.3, 0.6]  # the threshold value based on similarity (the value of pearson)
     movie_matrix_75 = read_matrix()
     movie_matrix_75 = empty_random(movie_matrix_75, 0.75)
     norm_matrix_75 = normalize_matrix(movie_matrix_75)
