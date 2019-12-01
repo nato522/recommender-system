@@ -212,8 +212,8 @@ def main():
         final_matrix_25, list_predicted_info_25, list_non_rounded_info_25 = get_predicted_ratings(k, pearson_matrix_25,
                                                                                                   norm_matrix_25,
                                                                                                   movie_matrix_25)
-        ew.generate_results_25(initial_matrix, movie_matrix_25, pearson_matrix_25, final_matrix_25,
-                               list_predicted_info_25, list_non_rounded_info_25, k)
+        ew.generate_results(initial_matrix, movie_matrix_25, norm_matrix_25, pearson_matrix_25, final_matrix_25,
+                            list_predicted_info_25, list_non_rounded_info_25, k, hf.EMPTY_25)
 
     """ Results with the 75% empty cells """
     k_75 = [0, 0.3, 0.6]  # the threshold value based on similarity (the value of pearson)
@@ -225,8 +225,8 @@ def main():
         final_matrix_75, list_predicted_info_75, list_non_rounded_info_75 = get_predicted_ratings(n, pearson_matrix_75,
                                                                                                   norm_matrix_75,
                                                                                                   movie_matrix_75)
-        ew.generate_results_75(initial_matrix, movie_matrix_75, pearson_matrix_75, final_matrix_75,
-                               list_predicted_info_75, list_non_rounded_info_75, n)
+        ew.generate_results(initial_matrix, movie_matrix_75, norm_matrix_75, pearson_matrix_75, final_matrix_75,
+                            list_predicted_info_75, list_non_rounded_info_75, n, hf.EMPTY_75)
 
 
 class PredictedInfo:

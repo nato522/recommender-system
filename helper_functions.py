@@ -1,5 +1,8 @@
 import numpy as np
 
+EMPTY_25 = 0
+EMPTY_75 = 1
+
 
 def get_all_rated_movies(user_id, list_predicted_info):
     if user_id > 50 or user_id < 0:
