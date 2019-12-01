@@ -65,6 +65,20 @@ def fill_empty_matrix(workbook, matrix):
     return
 
 
+def fill_normalized_matrix(workbook, matrix):
+    # create worksheet
+    normalized_matrix = workbook.add_worksheet('Normalized matrix')
+    title_format = workbook.add_format()
+    title_format.set_bold()
+    title_format.set_text_wrap()
+    set_movie_titles(normalized_matrix, title_format)
+    # fill matrix
+    for row in range(len(matrix)):
+        for column in range(len(matrix[0])):
+            normalized_matrix.write(row+1, column, matrix[row][column])
+    return
+
+
 def fill_pc_matrix(workbook, matrix):
     # create worksheet
     pc_matrix = workbook.add_worksheet('Pearson Correlation')
@@ -148,25 +162,18 @@ def evaluate_rs(workbook, original_matrix, ratings):
     pass
 
 
-def generate_results_25(initial_matrix, empty_matrix, pc_matrix, final_matrix, predicted_ratings, non_rounded_info, k):
+def generate_results(initial_matrix, empty_matrix, normalized_matrix, pc_matrix, final_matrix, predicted_ratings,
+                     non_rounded_info, n, flag):
     now = datetime.now().microsecond
-    workbook_25 = xlsxwriter.Workbook('./results/rating_analysis_25_' + str(k) + '_' + str(now) + '.xlsx')
-    fill_initial_matrix(workbook_25, initial_matrix)
-    fill_empty_matrix(workbook_25, empty_matrix)
-    fill_pc_matrix(workbook_25, pc_matrix)
-    fill_final_matrix(workbook_25, final_matrix, predicted_ratings)
-    fill_predicted_ratings(workbook_25, predicted_ratings)
-    evaluate_rs(workbook_25, initial_matrix, non_rounded_info)
-    workbook_25.close()
-
-
-def generate_results_75(initial_matrix, empty_matrix, pc_matrix, final_matrix, predicted_ratings, non_rounded_info, n):
-    now = datetime.now().microsecond
-    workbook_75 = xlsxwriter.Workbook('./results/rating_analysis_75_' + str(n) + '_' + str(now) + '.xlsx')
-    fill_initial_matrix(workbook_75, initial_matrix)
-    fill_empty_matrix(workbook_75, empty_matrix)
-    fill_pc_matrix(workbook_75, pc_matrix)
-    fill_final_matrix(workbook_75, final_matrix, predicted_ratings)
-    fill_predicted_ratings(workbook_75, predicted_ratings)
-    evaluate_rs(workbook_75, initial_matrix, non_rounded_info)
-    workbook_75.close()
+    if flag is hf.EMPTY_25:
+        workbook = xlsxwriter.Workbook('./results/rating_analysis_25_' + str(n) + '_' + str(now) + '.xlsx')
+    else:
+        workbook = xlsxwriter.Workbook('./results/rating_analysis_75_' + str(n) + '_' + str(now) + '.xlsx')
+    fill_initial_matrix(workbook, initial_matrix)
+    fill_empty_matrix(workbook, empty_matrix)
+    fill_normalized_matrix(workbook, normalized_matrix)
+    fill_pc_matrix(workbook, pc_matrix)
+    fill_final_matrix(workbook, final_matrix, predicted_ratings)
+    fill_predicted_ratings(workbook, predicted_ratings)
+    evaluate_rs(workbook, initial_matrix, non_rounded_info)
+    workbook.close()

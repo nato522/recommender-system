@@ -11,6 +11,5 @@ def mae(prediction_errors):
 def prediction_error(rating, original_matrix):
     '''
     :return: abs(prediction - real_rating)
-    TODO: get rating in original matrix, predicted rating, and get their error
     '''
     return abs(rating.predicted_rating - original_matrix[rating.user_id][rating.movie_id])
