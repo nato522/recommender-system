@@ -1,26 +1,22 @@
-# recommender-system
-Content-Filtering Recommender System
+# Collaborative-Filtering Recommender System
+Short description of the project
 
-Getting started with [python](https://www.python.org/about/gettingstarted/)
+## Getting started
 
-Check if you have python already installed typing `python --version` in your terminal. If you get the version number then everything is alright.
+For this project we are going to need Python 3. In the case you don't have Python 3 installed [you can find it
+here](https://www.python.org/downloads/release/python-373/).
 
-Here you can find some [tutorials](https://wiki.python.org/moin/BeginnersGuide/Programmers)
+To make sure you have installed it correctly you can execute the command `python --version`, and if the version is still
+not *3.7.3* try with `python3 --version`.
 
-## How to use python with commands
-To start the interpreter open the terminal and type:
+Then, to install all the needed packages execute the following command from the project root folder:
 
-`python`
+`./setup`
 
-Now you can type the commands, for example:
+## How it works
 
-`>>> print("Hello world!");`
+Now that you have everything installed, you can execute the program using the command:
 
-To exit press `Ctrl+D` or type the `exit()` command.
+`python recommender_system.py` or `python3 recommender_system.py`
 
-## How to use python with a file
-Type `python` + `your_file_name.py`.
-
-Example:
-
-`python helloworld.py`
+The results will appear in the folder `./results`.
