@@ -9,9 +9,10 @@ here](https://www.python.org/downloads/release/python-373/).
 To make sure you have installed it correctly you can execute the command `python --version`, and if the version is still
 not *3.7.3* try with `python3 --version`.
 
-Then, to install all the needed packages execute the following command from the project root folder:
+Then, use the `pip` tool to install all the needed packages. For that, execute the following command from the project
+root folder:
 
-`./setup`
+`pip install --user numpy xlsxwriter`
 
 ## How it works
 
