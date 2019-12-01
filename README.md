@@ -1,5 +1,6 @@
 # Collaborative-Filtering Recommender System
-Short description of the project
+This project consists on analyzing the results of applying a CFRS to the same matrix of ratings, in the first case with
+25% of the matrix empty and in the second case with the 75% of the matrix empty.
 
 ## Getting started
 
