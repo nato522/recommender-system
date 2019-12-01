@@ -4,6 +4,12 @@ EMPTY_25 = 0
 EMPTY_75 = 1
 
 
+class PredictedInfo:
+    def __init__(self, user_id, movie_id, predicted_rating):
+        self.user_id = user_id
+        self.movie_id = movie_id
+        self.predicted_rating = predicted_rating
+
 def get_all_rated_movies(user_id, list_predicted_info):
     if user_id > 50 or user_id < 0:
         print("Wrong user id!")

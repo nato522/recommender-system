@@ -5,6 +5,7 @@ import operator
 import os
 from datetime import datetime
 
+
 titles = []
 
 path = "./results"
@@ -14,7 +15,6 @@ except OSError:
     print("Creation of the directory %s failed" % path)
 else:
     print("Successfully created the directory %s " % path)
-
 
 
 def get_titles():
@@ -128,7 +128,26 @@ def highlight_predicted_ratings(worksheet, ratings, rating_format):
     return
 
 
-def evaluate_rs(workbook, original_matrix, ratings):
+def get_N_ratings(N, non_rounded_info):
+    evaluation_ratings = []
+
+    for user in range(50):
+        map_rated_movies = hf.get_all_rated_movies(user, non_rounded_info)
+        sorted_list_rated_movies = sorted(map_rated_movies.items(), key=operator.itemgetter(1), reverse=1)
+        if len(sorted_list_rated_movies) < N:
+            no_items = len(sorted_list_rated_movies)
+        else:
+            no_items = N
+        for movie, rating in sorted_list_rated_movies:
+            if no_items > 0:
+                predicted_eval_obj = hf.PredictedInfo(user, movie, rating)
+                evaluation_ratings.append(predicted_eval_obj)
+                no_items -= 1
+
+    return evaluation_ratings
+
+
+def evaluate_rs(workbook, original_matrix, non_rounded_info, N):
     evaluation_results = workbook.add_worksheet('Evaluation')
     title_format = workbook.add_format()
     title_format.set_bold()
@@ -136,7 +155,8 @@ def evaluate_rs(workbook, original_matrix, ratings):
     prediction_errors = []
     longest_title = max(titles, key=len)
     row = 2
-    for rating in ratings:
+    n_ratings = get_N_ratings(N, non_rounded_info)
+    for rating in n_ratings:
         prediction_error = evalf.prediction_error(rating, original_matrix)
         evaluation_results.write(row, 0, rating.user_id)
         evaluation_results.write(row, 1, titles[rating.movie_id])
@@ -165,6 +185,7 @@ def evaluate_rs(workbook, original_matrix, ratings):
 def generate_results(initial_matrix, empty_matrix, normalized_matrix, pc_matrix, final_matrix, predicted_ratings,
                      non_rounded_info, n, flag):
     now = datetime.now().microsecond
+    N = 3
     if flag is hf.EMPTY_25:
         workbook = xlsxwriter.Workbook('./results/rating_analysis_25_' + str(n) + '_' + str(now) + '.xlsx')
     else:
@@ -175,5 +196,5 @@ def generate_results(initial_matrix, empty_matrix, normalized_matrix, pc_matrix,
     fill_pc_matrix(workbook, pc_matrix)
     fill_final_matrix(workbook, final_matrix, predicted_ratings)
     fill_predicted_ratings(workbook, predicted_ratings)
-    evaluate_rs(workbook, initial_matrix, non_rounded_info)
+    evaluate_rs(workbook, initial_matrix, non_rounded_info, N)
     workbook.close()

@@ -190,11 +190,11 @@ def get_predicted_ratings(k, pearson_matrix, norm_matrix, movie_matrix):
             denormalized_rating = denormalize_rating_matrix(rating, movie_matrix, i)
 
             non_rounded_matrix[i][j] = denormalized_rating
-            non_rounded_predicted_info_obj = PredictedInfo(i, j, non_rounded_matrix[i][j])
+            non_rounded_predicted_info_obj = hf.PredictedInfo(i, j, non_rounded_matrix[i][j])
             list_non_rounded_predicted_info.append(non_rounded_predicted_info_obj)
 
             final_matrix[i][j] = hf.round_rating(denormalized_rating)
-            predicted_info_obj = PredictedInfo(i, j, final_matrix[i][j])
+            predicted_info_obj = hf.PredictedInfo(i, j, final_matrix[i][j])
             list_predicted_info.append(predicted_info_obj)
 
     return final_matrix, list_predicted_info, list_non_rounded_predicted_info
@@ -227,13 +227,6 @@ def main():
                                                                                                   movie_matrix_75)
         ew.generate_results(initial_matrix, movie_matrix_75, norm_matrix_75, pearson_matrix_75, final_matrix_75,
                             list_predicted_info_75, list_non_rounded_info_75, n, hf.EMPTY_75)
-
-
-class PredictedInfo:
-    def __init__(self, user_id, movie_id, predicted_rating):
-        self.user_id = user_id
-        self.movie_id = movie_id
-        self.predicted_rating = predicted_rating
 
 
 main()
