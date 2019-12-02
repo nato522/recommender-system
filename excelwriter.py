@@ -158,7 +158,7 @@ def evaluate_rs(workbook, original_matrix, non_rounded_info, N):
     n_ratings = get_N_ratings(N, non_rounded_info)
     for rating in n_ratings:
         prediction_error = evalf.prediction_error(rating, original_matrix)
-        evaluation_results.write(row, 0, rating.user_id)
+        evaluation_results.write(row, 0, rating.user_id + 1)
         evaluation_results.write(row, 1, titles[rating.movie_id])
         evaluation_results.write(row, 2, original_matrix[rating.user_id][rating.movie_id])
         evaluation_results.write(row, 3, rating.predicted_rating)
